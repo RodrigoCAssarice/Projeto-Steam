@@ -26,8 +26,7 @@ Até o momento, concluímos a **Etapa 2 (Captura)**, que organiza e valida os da
 
 ### Testes realizados
 - Execução isolada do coletor com:
-  ```bash
-  python -m src.collectors.steam.api
+    python -m src.collectors.steam.api
 
   Resultado: envelope válido com dados da Steam (ex.: jogos em promoção).
 - Execução da Function localmente com:
