@@ -1,8 +1,23 @@
 # Steam Data Pipeline
 
+## Metas
+- [x] Estrutura inicial do repositório
+- [x] Coleta de dados brutos (Bronze)
+- [ ] Processamento Silver  (Desenvolvimento/Testes)
+- [ ] Processamento Gold   (em analise dos processos e inicio de integração com ajuste da etapa silver )
+- [ ] Ingestão em streaming no Storage Account
+- [ ] Parsing HTML com IA
+- [ ] Processamento Spark (Big Data)
+- [ ] Data Lakehouse (Delta Lake)
+- [ ] Pipeline ELT com DLT
+- [ ] Modelagem analítica (tabelas fato/dimensão)
+- [ ] Monitoramento com Grafana
+
+
+
 ## 📌 Visão Geral
 Este projeto implementa uma **pipeline de captura de dados da Steam** usando **Azure Functions** e uma arquitetura em camadas (bronze → silver → gold).  
-Até o momento, concluímos a **Etapa 2 (Captura)**, que organiza e valida os dados coletados da API da Steam.
+Até o momento, concluí a **Etapa 2 (Captura)**, que organiza e valida os dados coletados da API da Steam.
 
 ---
 
