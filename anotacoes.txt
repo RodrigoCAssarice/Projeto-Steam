@@ -198,3 +198,21 @@ Checkpoint e próximos passos
 
 
 //"schedule": "0 0 6 * * *"
+
+
+
+
+Meta: Captação de Dados Brutos em Quase Tempo Real: coletar dados de jogos da Steam e preços
+Objetivo: Criar uma aplicação no Azure Functions para capturar dados brutos diários de sites de e-commerce e marketplaces para análise posterior. Benefício: Permite produzir dados em quase tempo real com menor custo. Ingestão de dados em Streaming:
+Objetivo: Criar consumidor streaming de forma incremental no storageaccount. Benefício: Permite a captura de dados em streaming utilizando recurso interátivo na Azure de baixa compelxidade e de menor custo. Escalando Captura de Elemento HTML:
+Objetivo: Utilizar modelos de IA para extrair informações essenciais dos arquivos HTML, como links, títulos, preços, promoções, parcelamentos e imagens dos produtos. Benefício: Escalabilidade para ampliar o leque de fonte de dados e flexibilidade para processo produtivo com menor probabilidade para correções de bugs. Processamento e Escalabilidade para BigData:
+Objetivo: Aplicar processamento Spark ao conjuntos de dados na arquitetura medalhão do pipeline. Benefício: Melhoria da qualidade dos dados, com correção de dados e padronização do mesmo e, além disso, o processamento de dados escalonáveis e suportando big data. Data Lakehouse Estrutura Medalhão de Dados:
+Objetivo: Transformar o datalake (storageaccount) em um data lakehouse. Benefício: Combinando a flexibilidade e escalabilidade de um data lake com a confiabilidade e performance de um data warehouse. Pipeline ELT com DLT:
+Objetivo: Criar um pipeline de dados com baixa complexidade de desenvolvimento e com grandes ganho em qualidade e monitoramento de dados. Benefício: o DLT transforma pipelines de ETL/ELT em algo mais confiável, menos manual e pronto para escalar, acelerando a entrega de valor com dados. Otimizando o processo para análise e BI:
+Objetivo: Utilização do Spark SQL no Databricks para a criação de tabelas fato e dimensão a partir de uma tabela Gold do Data Lakehouse. Benefício: Permite uma modelagem de dados analíticos eficiente e confiável, combinando a familiaridade do SQL com a escalabilidade do Spark e a integridade do Delta Lake. Monitoramento de Processos:
+Objetivo: Monitoramento de todos recurtsos e status do projeto. Benefício: Monitoramento de todas as funcionalidades e recursos da arquitetura do projeto em um único local (Grafana).
+
+
+
+ “Agora com todos os dados vamos continuar"
+
