@@ -2,40 +2,23 @@ import os
 import requests
 import datetime as dt
 
-from .parser import normalize_featured
-from .schemas import validate_envelope
-
-def now_iso():
-    return dt.datetime.now(dt.timezone.utc).isoformat()
-
-def fetch_featured():
+def get_featured_games():
     """
     Captura categorias em destaque da Steam.
-    Retorna envelope validado e normalizado.
+    Retorna o dicionário JSON bruto da API (payload) ou levanta um erro HTTP.
     """
     base = os.getenv("STEAM_API_BASE", "https://store.steampowered.com")
     url = f"{base}/api/featuredcategories"
     headers = {"User-Agent": "steam-data-pipeline/1.0"}
+    
+    # Faz a requisição HTTP
+    # Se falhar, r.raise_for_status() levantará uma exceção clara.
     r = requests.get(url, timeout=30, headers=headers)
     r.raise_for_status()
-    payload = r.json()
+    
+    # Retorna o JSON puro da API para o Bronze
+    return r.json()
 
-    envelope = {
-        "source": "steam",
-        "endpoint": "featuredcategories",
-        "captured_at": now_iso(),
-        "data": normalize_featured(payload),
-    }
-
-    validate_envelope(envelope)
-    return envelope
-
-
-##if __name__ == "__main__":
-##    result = fetch_featured()
-##    print("Envelope capturado:")
-##    print(result.keys())  # mostra as chaves principais
-##    print("Source:", result["source"])
-##    print("Endpoint:", result["endpoint"])
-##    print("Captured_at:", result["captured_at"])
-##    print("Data sample:", str(result["data"])[:200], "...")
+def now_iso():
+    # Mantendo a função, pois pode ser usada em outras partes
+    return dt.datetime.now(dt.timezone.utc).isoformat()
