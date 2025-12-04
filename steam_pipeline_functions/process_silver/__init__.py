@@ -4,7 +4,7 @@ from pathlib import Path
 import azure.functions as func
 
 import sys
-# garante que a raiz do projeto esteja no sys.path
+# Garante que o path do projeto seja acessível
 root = Path(__file__).resolve().parents[2]
 sys.path.append(str(root))
 
@@ -26,7 +26,7 @@ def _silver_dir():
 def _list_bronze_files():
     d = _bronze_dir()
     d.mkdir(parents=True, exist_ok=True)
-    return sorted(d.glob("raw_*.json"))
+    return sorted(d.glob("raw_featured_*.json"))
 
 
 def _load_json(path: Path):
@@ -44,36 +44,43 @@ def _save_silver(items, tag="featured"):
     print(f"[process_silver] wrote {outfile}")
     return outfile
 
-
 def main(timer: func.TimerRequest) -> None:
     print("[process_silver] start")
-    bronze_files = _list_bronze_files()
+    
+    bronze_files = _list_bronze_files() 
+    
     if not bronze_files:
         print("[process_silver] no bronze files found")
         return
 
-    silver_items = []
+    final_game_list = []
+    normalized_ts = _now_iso()
+
     for bf in bronze_files:
         try:
             payload = _load_json(bf)
             
-            # CORREÇÃO: Assume que o payload é a resposta bruta da API (dicionário de categorias).
-            # Passamos o payload diretamente para o parser.
-            normalized = parser.parse_featured(payload) 
+            if not isinstance(payload, dict):
+                 print(f"[process_silver] SKIPPING: {bf.name} não é um dicionário (formato de API).")
+                 continue
+            
+            # Desaninhamento (flattening) usando o parser CORRIGIDO
+            categories = parser.parse_featured(payload) 
 
-            # Adiciona o envelope de metadados ao Silver
-            silver_items.append({
-                "source": "steam",
-                "endpoint": "featuredcategories",
-                "captured_at": _now_iso(), # Usamos o tempo atual
-                "normalized_at": _now_iso(),
-                "data": normalized,
-            })
+            for category_name, category_data in categories.items():
+                # Esta linha agora funciona, pois o parser.py garante que category_data tem 'items'
+                for game in category_data.get("items", []): 
+                    game["source"] = "steam"
+                    game["endpoint"] = "featuredcategories"
+                    game["category"] = category_name 
+                    game["captured_at"] = normalized_ts
+                    game["normalized_at"] = normalized_ts
+                    final_game_list.append(game)
             
         except Exception as e:
             print(f"[process_silver] error reading or parsing {bf}: {e}")
 
-    if silver_items:
-        _save_silver(silver_items, tag="featured")
+    if final_game_list:
+        _save_silver(final_game_list, tag="featured")
     else:
         print("[process_silver] nothing to save")
