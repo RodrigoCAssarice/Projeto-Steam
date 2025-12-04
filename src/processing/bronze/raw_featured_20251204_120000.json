@@ -1,0 +1,10 @@
+{
+  "specials": {
+    "id": 1,
+    "name": "dummy"
+  },
+  "top_sellers": {
+    "id": 2,
+    "name": "dummy"
+  }
+}

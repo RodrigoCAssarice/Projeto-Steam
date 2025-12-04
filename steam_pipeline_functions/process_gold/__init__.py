@@ -7,45 +7,35 @@ import glob
 from pathlib import Path
 import sys
 
-# 🚨 CRÍTICO: Configuração do PATH para encontrar o módulo 'src'
-# A função Azure precisa saber onde procurar 'src/processing/gold/aggregator.py'.
-# Adicionamos a pasta raiz do projeto ao PATH do Python.
-# O Path('..').resolve().parent.parent aponta para a pasta 'steam-data-pipeline'
+# CRÍTICO: Configuração do PATH para encontrar o módulo 'src'
+# Assegura que o módulo 'src' seja acessível, subindo 4 níveis do arquivo __init__.py
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
 
-# Importação do módulo de processamento Gold, agora que o PATH está configurado
+# Importação do módulo de processamento Gold
 try:
     from src.processing.gold.aggregator import aggregate_featured_games
     logging.info("Módulo 'aggregate_featured_games' importado com sucesso.")
 except ImportError as e:
-    logging.error(f"ERRO DE IMPORTAÇÃO: Não foi possível encontrar o módulo Gold. Verifique a estrutura de pastas e o PATH. Detalhe: {e}")
-    # Se falhar, definimos uma função dummy para não travar o restante
+    logging.error(f"ERRO DE IMPORTAÇÃO: {e}")
+    # Função dummy para evitar quebrar o programa se o import falhar
     def aggregate_featured_games(data, time): return []
 
 
-def main(mytimer: func.TimerRequest) -> None:
+# FUNÇÃO PRINCIPAL: Usa 'timer' para corresponder ao function.json
+def main(timer: func.TimerRequest) -> None:
     utc_timestamp = datetime.utcnow().isoformat()
     processing_time = utc_timestamp
     logging.info('Python timer trigger function process_gold started at %s', processing_time)
 
-    # 1. Configuração de Caminhos (Assume que silver_output/ e gold_output/ estão na raiz do projeto)
-    ##BASE_PATH = Path(__file__).resolve().parent.parent.parent.parent 
-    ##BASE_PATH = Path(__file__).resolve().parent.parent
+    # 1. Configuração de Caminhos
     BASE_PATH = Path(__file__).resolve().parent.parent.parent
-    SILVER_PATH = BASE_PATH / "src" / "processing" / "silver" ##/ "silver_output"
+    SILVER_PATH = BASE_PATH / "src" / "processing" / "silver"
     GOLD_PATH = BASE_PATH / "gold_output"
     
     # 2. Cria o diretório de saída Gold se não existir
     GOLD_PATH.mkdir(exist_ok=True)
     
     # 3. Localiza o arquivo Silver mais recente
-    # A função glob.glob busca todos os arquivos que correspondem ao padrão
-    ##list_of_files = glob.glob(str(SILVER_PATH / "silver_featured_*.json"))
-    list_of_files = glob.glob(str(SILVER_PATH / "silver_featured_*.json"))
-
-    # 3. Localiza o arquivo Silver mais recente
-    logging.info('Caminho de busca Silver: %s', SILVER_PATH) # <-- ADICIONE ESTA LINHA
-    # A função glob.glob busca todos os arquivos que correspondem ao padrão
     list_of_files = glob.glob(str(SILVER_PATH / "silver_featured_*.json"))
 
     if not list_of_files:
@@ -60,18 +50,22 @@ def main(mytimer: func.TimerRequest) -> None:
     try:
         with open(latest_file, 'r', encoding='utf-8') as f:
             silver_data = json.load(f)
+            
+            # ✅ Extrai a lista de jogos do campo "items"
+            games_list = silver_data.get("items", []) 
+            
     except Exception as e:
         logging.error(f"Erro ao ler arquivo Silver: {e}")
         return
 
-    # 5. Processa os dados usando o módulo Gold
-    gold_records = aggregate_featured_games(silver_data, processing_time)
+    # 5. Processa os dados
+    gold_records = aggregate_featured_games(games_list, processing_time)
 
     if not gold_records:
         logging.warning("A agregação Gold não retornou registros. Pulando a escrita.")
         return
 
-    # 6. Salva o resultado agregado na camada Gold
+    # 6. Salva o resultado agregado
     output_filename = f"gold_featured_facts_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     output_path = GOLD_PATH / output_filename
 
@@ -84,6 +78,6 @@ def main(mytimer: func.TimerRequest) -> None:
     except Exception as e:
         logging.error(f"Erro ao salvar arquivo Gold: {e}")
 
-
-    if mytimer.past_due:
+    # 🚨 CORREÇÃO FINAL DE BINDING: Usando 'timer' em vez de 'mytimer'
+    if timer.past_due: 
         logging.info('The timer is past due!')
