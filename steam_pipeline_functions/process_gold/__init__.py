@@ -22,7 +22,9 @@ except ImportError as e:
 
 
 # FUNÇÃO PRINCIPAL: Usa 'timer' para corresponder ao function.json
-def main(timer: func.TimerRequest) -> None:
+#def main(timer: func.TimerRequest) -> None:
+#    utc_timestamp = datetime.utcnow().isoformat()
+def main(timer: func.TimerRequest = None) -> None: 
     utc_timestamp = datetime.utcnow().isoformat()
     processing_time = utc_timestamp
     logging.info('Python timer trigger function process_gold started at %s', processing_time)
