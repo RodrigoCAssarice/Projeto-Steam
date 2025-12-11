@@ -3,7 +3,7 @@
 ## Metas
 - [x] Estrutura inicial do repositório
 - [x] Coleta de dados brutos (Bronze)
-- [ ] Processamento Silver  (Desenvolvimento/Testes)
+- [x] Processamento Silver  (Desenvolvimento/Testes)
 - [ ] Processamento Gold   (em analise dos processos e inicio de integração com ajuste da etapa silver )
 - [ ] Ingestão em streaming no Storage Account
 - [ ] Parsing HTML com IA
@@ -49,32 +49,19 @@ func start --port 7072
 
 - Resultado: arquivos raw_YYYYMMDD_HHMMSS.json criados em src/processing/bronze
 
-
+```
 steam-data-pipeline/
-
 ├── steam_pipeline_functions/
-
 │   └── capture_daily/
-
 │       └── __init__.py
-
 ├── src/
-
 │   ├── collectors/
-
 │   │   └── steam/
-
 │   │       ├── api.py
-
 │   │       ├── parser.py
-
 │   │       ├── schemas.py
-
 │   │       └── __init__.py
-
 │   └── processing/
-
 │       └── bronze/
-
 │           └── raw_*.json
-
+```
