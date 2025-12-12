@@ -40,4 +40,5 @@ Thumbs.db # Windows
 # 5. Arquivos de testes de mudancas locais
 # ----------------------------------------- 
 funcional__init__.py
-steam_pipeline_functions_error
+steam_pipeline_functions_error/
+gold_output/
